@@ -64,7 +64,10 @@ class PDFKit
     append_stylesheets
 
     args = command(path)
+    
     invoke = args.join(' ')
+    
+    puts args.join(' ')
 
     result = IO.popen(invoke, "w+") do |pdf|
       pdf.puts(@source.to_s) if @source.html?
@@ -73,7 +76,7 @@ class PDFKit
     end
     result = File.read(path) if path
 
-    raise "command failed: #{invoke}" if result.to_s.strip.empty?
+    raise "command failed: #{invoke}\(PDFKit #{VERSION})" if result.to_s.strip.empty?
     return result
   end
 
