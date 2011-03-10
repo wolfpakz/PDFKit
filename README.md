@@ -6,25 +6,24 @@ Create PDFs using plain old HTML+CSS. Uses [wkhtmltopdf](http://github.com/antia
 
 ### PDFKit
 
-    gem install pdfkit
+in Gemfile
+	
+        gem 'pdfkit', :git => 'git://github.com/roberocity/PDFKit.git'
 
 ### wkhtmltopdf
 
-1. Install by hand (recomended):
+Use the static library of wkhtmltopdf
 
-        https://github.com/jdpace/PDFKit/wiki/Installing-WKHTMLTOPDF
-
-2. Try using the wkhtmltopdf-binary gem (mac + linux i386)
-
-        gem install wkhtmltopdf-binary
-
-*Note:* The automated installer has been removed.
+        http://code.google.com/p/wkhtmltopdf/downloads/list
+        *0.10 .0_rc2-static
 
 ## Usage
 
     # PDFKit.new takes the HTML and any options for wkhtmltopdf
     # run `wkhtmltopdf --extended-help` for a full list of options
-    kit = PDFKit.new(html, :page_size => 'Letter')
+
+	# PDFKit(html, global_options, toc_options, cover_options)
+    kit = PDFKit.new(html, {:page_size => 'Letter'}, {:toc => true}, {:cover => 'http://www.example.com/cover'} 
     kit.stylesheets << '/path/to/css/file'
 
     # Git an inline PDF
@@ -108,9 +107,6 @@ PDFKit comes with a middleware that allows users to get a PDF view of any page o
    your resources. If you are using PDFKit to generate pdfs from a raw
    HTML source make sure you use complete paths (either file paths or 
    urls including the domain).
-
-## TODO
- - add amd64 support in --install-wkhtmltopdf
 
 ## Note on Patches/Pull Requests
 
