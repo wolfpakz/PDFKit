@@ -40,7 +40,7 @@ describe PDFKit do
       pdfkit.options['--encoding'].should == 'UTF-8'
     end
 
-    it "should not have any stylesheedt by default" do
+    it "should not have any stylesheet by default" do
       pdfkit = PDFKit.new('<h1>Oh Hai</h1>')
       pdfkit.stylesheets.should be_empty
     end

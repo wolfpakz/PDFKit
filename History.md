@@ -1,3 +1,8 @@
+2011-03
+==================
+  * Bump to 0.5.1
+  * Reworked the call to wkhtmltopdf to take advantage of new options in wkhtmltopdf v 0.10.rc2
+
 2010-12-27 
 ==================
   * Bump to 0.5.0

@@ -3,7 +3,8 @@ class PDFKit
   class NoExecutableError < StandardError
     def initialize
       msg  = "No wkhtmltopdf executable found at #{PDFKit.configuration.wkhtmltopdf}\n"
-      msg << ">> Please install wkhtmltopdf - https://github.com/jdpace/PDFKit/wiki/Installing-WKHTMLTOPDF"
+      msg << ">> Please install wkhtmltopdf - https://github.com/jdpace/PDFKit/wiki/Installing-WKHTMLTOPDF\n"
+      msg << ">> or get the static files from http://code.google.com/p/wkhtmltopdf/downloads/list"
       super(msg)
     end
   end
@@ -17,7 +18,7 @@ class PDFKit
   attr_accessor :source, :stylesheets
   attr_reader :options
 
-  def initialize(url_file_or_html, options = {})
+  def initialize(url_file_or_html, options = {}, toc_options = {})
     @source = Source.new(url_file_or_html)
 
     @stylesheets = []
@@ -25,19 +26,23 @@ class PDFKit
     @options = PDFKit.configuration.default_options.merge(options)
     @options.merge! find_options_in_meta(url_file_or_html) unless source.url?
     @options = normalize_options(@options)
+    
+    @toc_options = PDFKit.configuration.default_toc_options.merge(toc_options)
+    @toc_options = normalize_options(@toc_options)
 
     raise NoExecutableError.new unless File.exists?(PDFKit.configuration.wkhtmltopdf)
   end
 
   def command(path = nil)
     args = [executable]
+    args += @toc_options.to_a.flatten.compact
     args += @options.to_a.flatten.compact
     args << '--quiet'
 
     if @source.html?
       args << '-' # Get HTML from stdin
     else
-      args << @source.to_s
+      args << "page #{@source.to_s}"
     end
 
     args << (path || '-') # Write to file or stdout
@@ -119,8 +124,8 @@ class PDFKit
 
       options.each do |key, value|
         next if !value
-        normalized_key = "--#{normalize_arg key}"
-        normalized_options[normalized_key] = normalize_value(value)
+        normalized_key = ['toc','page','cover'].include?(key) ? "#{normalize_arg key}" : "--#{normalize_arg key}" 
+        normalized_options[normalized_key] = normalize_value value
       end
       normalized_options
     end
