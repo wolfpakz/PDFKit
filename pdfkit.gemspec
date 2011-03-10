@@ -6,9 +6,9 @@ Gem::Specification.new do |s|
   s.name        = "pdfkit"
   s.version     = PDFKit::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["Jared Pace", "Relevance"]
-  s.email       = ["jared@codewordstudios.com"]
-  s.homepage    = "http://github.com/jdpace/PDFKit"
+  s.authors     = ["Rob Sutherland", "Roberocity"]
+  s.email       = ["rob@roberocity.com"]
+  s.homepage    = "http://github.com/roberocity/PDFKit"
   s.summary     = "HTML+CSS -> PDF"
   s.description = "Uses wkhtmltopdf to create PDFs using HTML"
 

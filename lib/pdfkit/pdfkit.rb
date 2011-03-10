@@ -18,7 +18,7 @@ class PDFKit
   attr_accessor :source, :stylesheets
   attr_reader :options
 
-  def initialize(url_file_or_html, options = {}, toc_options = {})
+  def initialize(url_file_or_html, options = {}, toc_options = {}, cover_options = {})
     @source = Source.new(url_file_or_html)
 
     @stylesheets = []
@@ -29,16 +29,20 @@ class PDFKit
     
     @toc_options = PDFKit.configuration.default_toc_options.merge(toc_options)
     @toc_options = normalize_options(@toc_options)
+    
+    @cover_options = PDFKit.configuration.default_cover_options.merge(cover_options)
+    @cover_options = normalize_options(@cover_options)
 
     raise NoExecutableError.new unless File.exists?(PDFKit.configuration.wkhtmltopdf)
   end
 
   def command(path = nil)
     args = [executable]
-    args += @toc_options.to_a.flatten.compact
     args += @options.to_a.flatten.compact
     args << '--quiet'
-
+    args += @cover_options.to_a.flatten.compact
+    args += @toc_options.to_a.flatten.compact
+    
     if @source.html?
       args << '-' # Get HTML from stdin
     else
@@ -67,8 +71,6 @@ class PDFKit
     
     invoke = args.join(' ')
     
-    puts args.join(' ')
-
     result = IO.popen(invoke, "w+") do |pdf|
       pdf.puts(@source.to_s) if @source.html?
       pdf.close_write
@@ -76,7 +78,7 @@ class PDFKit
     end
     result = File.read(path) if path
 
-    raise "command failed: #{invoke}\(PDFKit #{VERSION})" if result.to_s.strip.empty?
+    raise "command failed: #{invoke}" if result.to_s.strip.empty?
     return result
   end
 
@@ -127,7 +129,7 @@ class PDFKit
 
       options.each do |key, value|
         next if !value
-        normalized_key = ['toc','page','cover'].include?(key) ? "#{normalize_arg key}" : "--#{normalize_arg key}" 
+        normalized_key = [:toc,:page,:cover].include?(key) ? "#{normalize_arg key}" : "--#{normalize_arg key}" 
         normalized_options[normalized_key] = normalize_value value
       end
       normalized_options

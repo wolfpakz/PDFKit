@@ -7,7 +7,7 @@ Install wkhtmltopdf:
 		http://code.google.com/p/wkhtmltopdf/downloads/list
 		Use 0.10.0_rc2-static
 
-1. Install by hand (recommended):
+1. Install by hand:
 
         https://github.com/jdpace/PDFKit/wiki/Installing-WKHTMLTOPDF
 

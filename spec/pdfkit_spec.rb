@@ -34,6 +34,21 @@ describe PDFKit do
         pdfkit.options.should have_key(option)
       end
     end
+    
+    it "should provide cover if cover option is included" do
+      pdfkit = PDFKit.new('<h1>Oh Hai</h1>', {}, {}, {:cover => 'cover.html'})
+      pdfkit.command.should include('"cover"')
+      pdfkit.command.should include('"cover.html"')
+    end
+    
+    it "should provide global options then cover then toc" do
+      pdfkit = PDFKit.new('http://www.example.com',{},{:toc => true},{:cover => 'url | path'})
+      pdfkit.command.should include('"cover"')
+      pdfkit.command.index('"--margin-top"').should be < pdfkit.command.index('"cover"')
+      pdfkit.command.index('"cover"').should be < pdfkit.command.index('"toc"')
+    end
+    
+    
 
     it "should default to 'UTF-8' encoding" do
       pdfkit = PDFKit.new('Captación')
@@ -77,13 +92,13 @@ describe PDFKit do
 
     it "specify the URL to the source if it is a url" do
       pdfkit = PDFKit.new('http://google.com')
-      pdfkit.command[-2..-1].should == ['"http://google.com"', '"-"']
+      pdfkit.command[-2..-1].should == ['"page http://google.com"', '"-"']
     end
 
     it "should specify the path to the source if it is a file" do
       file_path = File.join(SPEC_ROOT,'fixtures','example.html')
       pdfkit = PDFKit.new(File.new(file_path))
-      pdfkit.command[-2..-1].should == [%Q{"#{file_path}"}, '"-"']
+      pdfkit.command[-2..-1].should == [%Q{"page #{file_path}"}, '"-"']
     end
 
     it "should specify the path for the ouput if a apth is given" do
