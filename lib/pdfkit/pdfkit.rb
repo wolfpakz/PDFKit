@@ -43,10 +43,11 @@ class PDFKit
     args += @cover_options.to_a.flatten.compact
     args += @toc_options.to_a.flatten.compact
     
+    args << "page"
     if @source.html?
       args << '-' # Get HTML from stdin
     else
-      args << "page #{@source.to_s}"
+      args << @source.to_s
     end
 
     args << (path || '-') # Write to file or stdout

@@ -92,13 +92,13 @@ describe PDFKit do
 
     it "specify the URL to the source if it is a url" do
       pdfkit = PDFKit.new('http://google.com')
-      pdfkit.command[-2..-1].should == ['"page http://google.com"', '"-"']
+      pdfkit.command[-3..-1].should == ["\"page\"","\"http://google.com\"", '"-"']
     end
 
     it "should specify the path to the source if it is a file" do
       file_path = File.join(SPEC_ROOT,'fixtures','example.html')
       pdfkit = PDFKit.new(File.new(file_path))
-      pdfkit.command[-2..-1].should == [%Q{"page #{file_path}"}, '"-"']
+      pdfkit.command[-3..-1].should == ["\"page\"","\"#{file_path}\"", '"-"']
     end
 
     it "should specify the path for the ouput if a apth is given" do
