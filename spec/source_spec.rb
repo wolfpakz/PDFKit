@@ -41,6 +41,23 @@ describe PDFKit::Source do
     end
   end
   
+  describe "#multiple?" do
+    it "should return true if the source is an array of strings" do
+      source = PDFKit::Source.new(['page1.html','page2.html'])
+      source.should be_multiple
+    end
+    
+    it "should return false if passed a file" do
+      source = PDFKit::Source.new(File.new(__FILE__))
+      source.should_not be_multiple
+    end
+    
+    it "should return false if passed a string" do
+      source = PDFKit::Source.new('http://google.com')
+      source.should_not be_multiple
+    end
+  end
+  
   describe "#html?" do
     it "should return true if passed HTML" do
       source = PDFKit::Source.new('<blink>Oh Hai!</blink>')

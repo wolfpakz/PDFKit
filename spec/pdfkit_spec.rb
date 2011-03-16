@@ -22,6 +22,13 @@ describe PDFKit do
       pdfkit.source.should be_file
       pdfkit.source.to_s.should == file_path
     end
+    
+    it "should accept an Array of Urls as the source" do
+      urls = ['http://www.google.com/','http://www.yahoo.com/']
+      pdfkit = PDFKit.new(urls)
+      pdfkit.source.should be_multiple  
+      pdfkit.source.count.should be == urls.count
+    end
 
     it "should parse the options into a cmd line friedly format" do
       pdfkit = PDFKit.new('html', :page_size => 'Letter')
@@ -48,8 +55,6 @@ describe PDFKit do
       pdfkit.command.index('"cover"').should be < pdfkit.command.index('"toc"')
     end
     
-    
-
     it "should default to 'UTF-8' encoding" do
       pdfkit = PDFKit.new('Captación')
       pdfkit.options['--encoding'].should == 'UTF-8'
@@ -94,6 +99,12 @@ describe PDFKit do
       pdfkit = PDFKit.new('http://google.com')
       pdfkit.command[-3..-1].should == ["\"page\"","\"http://google.com\"", '"-"']
     end
+    
+    it "specify multipe pages if the source is an array" do
+      pdfkit = PDFKit.new(['http://google.com/','http://yahoo.com/'])
+      pdfkit.command[-5..-4].should == ["\"page\"","\"http://google.com/\""]
+      pdfkit.command[-3..-1].should == ["\"page\"","\"http://yahoo.com/\"", '"-"']
+    end
 
     it "should specify the path to the source if it is a file" do
       file_path = File.join(SPEC_ROOT,'fixtures','example.html')
@@ -128,6 +139,12 @@ describe PDFKit do
       pdf = pdfkit.to_pdf
       pdf[0...4].should == "%PDF" # PDF Signature at beginning of file
     end
+    
+    it "should generate a PDF of multiple pages if source is an array" do
+      pdfkit = PDFKit.new(['http://www.google.com/','http://www.google.com'])
+      pdf = pdfkit.to_pdf
+      pdf[0...4].should == "%PDF" # PDF Signagure at beginning of file
+    end
 
     it "should generate a PDF with a numerical parameter" do
       pdfkit = PDFKit.new('html', :header_spacing => 1)
@@ -156,7 +173,7 @@ describe PDFKit do
       pdfkit.to_pdf
       pdfkit.source.to_s.should include("<style>#{File.read(css)}</style><html>")
     end
-
+    
     it "should throw an error if the source is not html and stylesheets have been added" do
       pdfkit = PDFKit.new('http://google.com')
       css = File.join(SPEC_ROOT,'fixtures','example.css')

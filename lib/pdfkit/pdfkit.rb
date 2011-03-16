@@ -18,13 +18,13 @@ class PDFKit
   attr_accessor :source, :stylesheets
   attr_reader :options
 
-  def initialize(url_file_or_html, options = {}, toc_options = {}, cover_options = {})
-    @source = Source.new(url_file_or_html)
+  def initialize(single_or_array_of_url_file_or_html, options = {}, toc_options = {}, cover_options = {})
+    @source = Source.new(single_or_array_of_url_file_or_html)
 
     @stylesheets = []
 
     @options = PDFKit.configuration.default_options.merge(options)
-    @options.merge! find_options_in_meta(url_file_or_html) unless source.url?
+    @options.merge! find_options_in_meta(single_or_array_of_url_file_or_html) unless source.url?
     @options = normalize_options(@options)
     
     @toc_options = PDFKit.configuration.default_toc_options.merge(toc_options)
@@ -40,13 +40,20 @@ class PDFKit
     args = [executable]
     args += @options.to_a.flatten.compact
     args << '--quiet'
+    
     args += @cover_options.to_a.flatten.compact
     args += @toc_options.to_a.flatten.compact
     
-    args << "page"
-    if @source.html?
+    if @source.multiple?
+      @source.each do |source|
+        args << "page"
+        args << source.to_s
+      end
+    elsif @source.html?
+      args << "page"
       args << '-' # Get HTML from stdin
     else
+      args << "page"
       args << @source.to_s
     end
 
