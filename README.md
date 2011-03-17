@@ -17,16 +17,21 @@ Use the static library of wkhtmltopdf
         http://code.google.com/p/wkhtmltopdf/downloads/list
         *0.10 .0_rc2-static
 
+Requires version 0.10.0 rc2 to run properly. Only tested with that version on OS X and Linux (Ubuntu).
+
 ## Usage
 
     # PDFKit.new takes the HTML and any options for wkhtmltopdf
     # run `wkhtmltopdf --extended-help` for a full list of options
 
-	# PDFKit(html, global_options, toc_options, cover_options)
+    # PDFKit(html, global_options, toc_options, cover_options)
     kit = PDFKit.new(html, {:page_size => 'Letter'}, {:toc => true}, {:cover => 'http://www.example.com/cover'} 
     kit.stylesheets << '/path/to/css/file'
 
-    # Git an inline PDF
+    # PDFKit([url, url, url, ...], global_options, toc_options, cover_options)
+    # each url will be added as a page to the PDF. The array option works with Urls or full paths to files.
+
+    # Get an inline PDF
     pdf = kit.to_pdf
 
     # Save the PDF to a file
